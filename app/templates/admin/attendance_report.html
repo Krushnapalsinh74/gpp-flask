@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<div class="attendance-container">
+    <div class="section-header">
+        <h1><i class="fas fa-calendar-check"></i> Attendance Report</h1>
+    </div>
+
+    <div class="attendance-content">
+        <div class="filters">
+            <div class="filter-group">
+                <label>Department</label>
+                <select class="form-control">
+                    <option value="">All Departments</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept.id }}">{{ dept.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Date Range</label>
+                <div class="date-inputs">
+                    <input type="date" class="form-control">
+                    <span>to</span>
+                    <input type="date" class="form-control">
+                </div>
+            </div>
+            <button class="btn-primary">
+                <i class="fas fa-sync"></i> Update Report
+            </button>
+        </div>
+
+        <div class="attendance-stats">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>PRESENT TODAY</h3>
+                    <div class="stat-value">85%</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-user-times"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>ABSENT TODAY</h3>
+                    <div class="stat-value">15%</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>MONTHLY AVG</h3>
+                    <div class="stat-value">92%</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="attendance-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Department</th>
+                        <th>Present Days</th>
+                        <th>Absent Days</th>
+                        <th>Attendance %</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in attendance_records %}
+                    <tr>
+                        <td>
+                            <div class="student-info">
+                                <img src="{{ record.student.profile_pic or url_for('static', filename='images/default-avatar.png') }}" alt="Student">
+                                <div>
+                                    <h4>{{ record.student.first_name }} {{ record.student.last_name }}</h4>
+                                    <p>ID: {{ record.student.id }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ record.student.department.name }}</td>
+                        <td>{{ record.present_days }}</td>
+                        <td>{{ record.absent_days }}</td>
+                        <td>
+                            <div class="attendance-percentage {{ 'good' if record.percentage >= 75 else 'poor' }}">
+                                {{ record.percentage }}%
+                            </div>
+                        </td>
+                        <td>
+                            <button class="btn-icon" onclick="viewDetails({{ record.student.id }})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .attendance-container {
+        padding: 2rem;
+        background: #2D2D2D;
+        border-radius: 12px;
+        margin: 2rem;
+    }
+
+    .section-header {
+        margin-bottom: 2rem;
+    }
+
+    .section-header h1 {
+        color: #fff;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .filters {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        background: #222;
+        padding: 1.5rem;
+        border-radius: 12px;
+    }
+
+    .filter-group {
+        flex: 1;
+    }
+
+    .filter-group label {
+        display: block;
+        color: #888;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.8rem;
+        background: #2D2D2D;
+        border: 1px solid #383838;
+        border-radius: 8px;
+        color: #fff;
+    }
+
+    .date-inputs {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .date-inputs span {
+        color: #888;
+    }
+
+    .btn-primary {
+        padding: 0.8rem 1.5rem;
+        background: #3498db;
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .btn-primary:hover {
+        background: #2980b9;
+    }
+
+    .attendance-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: #222;
+        border-radius: 12px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: #2D2D2D;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #3498db;
+    }
+
+    .stat-content h3 {
+        color: #888;
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    .stat-value {
+        color: #fff;
+        font-size: 2rem;
+        font-weight: bold;
+        margin-top: 0.5rem;
+    }
+
+    .attendance-table {
+        background: #222;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        background: #1a1a1a;
+        color: #888;
+        font-weight: 500;
+        text-align: left;
+        padding: 1rem;
+    }
+
+    td {
+        padding: 1rem;
+        border-bottom: 1px solid #383838;
+        color: #fff;
+    }
+
+    .student-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .student-info img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .student-info h4 {
+        margin: 0;
+        color: #fff;
+    }
+
+    .student-info p {
+        margin: 0;
+        color: #888;
+        font-size: 0.9rem;
+    }
+
+    .attendance-percentage {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        display: inline-block;
+    }
+
+    .attendance-percentage.good {
+        background: rgba(46, 204, 113, 0.2);
+        color: #2ecc71;
+    }
+
+    .attendance-percentage.poor {
+        background: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+    }
+
+    .btn-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: #2D2D2D;
+        border: none;
+        color: #3498db;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-icon:hover {
+        background: #383838;
+    }
+
+    @media (max-width: 1200px) {
+        .attendance-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 992px) {
+        .filters {
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .attendance-container {
+            margin: 1rem;
+            padding: 1rem;
+        }
+
+        .section-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .attendance-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .attendance-table {
+            overflow-x: auto;
+        }
+    }
+</style>
+
+<script>
+function viewDetails(studentId) {
+    // Implement view details functionality
+    console.log('View details for student:', studentId);
+}
+</script>
+{% endblock %}

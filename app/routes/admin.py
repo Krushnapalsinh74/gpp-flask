@@ -608,3 +608,21 @@ def view_result_details(student_id, exam_id):
         abort(403)
     
     return render_template('admin/result_details.html', result=result)
+
+@bp.route('/student-tracking')
+@login_required
+@roles_required('admin')
+def student_tracking():
+    return render_template('admin/student_tracking.html')
+
+@bp.route('/attendance-report')
+@login_required
+@roles_required('admin')
+def attendance_report():
+    return render_template('admin/attendance_report.html')
+
+@bp.route('/academic-progress')
+@login_required
+@roles_required('admin')
+def academic_progress():
+    return render_template('admin/academic_progress.html')

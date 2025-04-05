@@ -1,0 +1,240 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<div class="tracking-container">
+    <div class="section-header">
+        <h1><i class="fas fa-map-marker-alt"></i> Student Location Tracking</h1>
+    </div>
+
+    <div class="tracking-content">
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
+        <div class="student-list">
+            <div class="list-header">
+                <h3>Students</h3>
+                <div class="search-box">
+                    <input type="text" placeholder="Search students...">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+            <div class="list-content">
+                {% for student in students %}
+                <div class="student-item">
+                    <div class="student-info">
+                        <img src="{{ student.profile_pic or url_for('static', filename='images/default-avatar.png') }}" alt="Student">
+                        <div class="details">
+                            <h4>{{ student.first_name }} {{ student.last_name }}</h4>
+                            <p>{{ student.department.name }}</p>
+                        </div>
+                    </div>
+                    <div class="status {{ student.status|lower }}">
+                        <span class="dot"></span>
+                        {{ student.status }}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .tracking-container {
+        padding: 2rem;
+        background: #2D2D2D;
+        border-radius: 12px;
+        margin: 2rem;
+    }
+
+    .section-header {
+        margin-bottom: 2rem;
+    }
+
+    .section-header h1 {
+        color: #fff;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .tracking-content {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        height: 70vh;
+    }
+
+    .map-container {
+        background: #222;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    #map {
+        width: 100%;
+        height: 100%;
+        background: #333;
+    }
+
+    .student-list {
+        background: #222;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .list-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #383838;
+    }
+
+    .list-header h3 {
+        color: #fff;
+        margin: 0 0 1rem;
+    }
+
+    .search-box {
+        position: relative;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        padding-right: 2.5rem;
+        background: #2D2D2D;
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+    }
+
+    .search-box i {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #666;
+    }
+
+    .list-content {
+        padding: 1rem;
+        overflow-y: auto;
+    }
+
+    .student-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        background: #2D2D2D;
+        border-radius: 8px;
+        margin-bottom: 0.8rem;
+    }
+
+    .student-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .student-info img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .details h4 {
+        color: #fff;
+        margin: 0;
+        font-size: 1rem;
+    }
+
+    .details p {
+        color: #888;
+        margin: 0.2rem 0 0;
+        font-size: 0.9rem;
+    }
+
+    .status {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+    }
+
+    .status .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+    }
+
+    .status.online {
+        background: rgba(46, 204, 113, 0.2);
+        color: #2ecc71;
+    }
+
+    .status.online .dot {
+        background: #2ecc71;
+    }
+
+    .status.away {
+        background: rgba(241, 196, 15, 0.2);
+        color: #f1c40f;
+    }
+
+    .status.away .dot {
+        background: #f1c40f;
+    }
+
+    .status.offline {
+        background: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+    }
+
+    .status.offline .dot {
+        background: #e74c3c;
+    }
+
+    @media (max-width: 1200px) {
+        .tracking-content {
+            grid-template-columns: 1fr;
+            height: auto;
+        }
+
+        .map-container {
+            height: 50vh;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .tracking-container {
+            margin: 1rem;
+            padding: 1rem;
+        }
+
+        .section-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .map-container {
+            height: 40vh;
+        }
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize map (you'll need to implement this with your preferred map library)
+    initializeMap();
+});
+
+function initializeMap() {
+    // Implement map initialization here
+    console.log('Map initialization will go here');
+}
+</script>
+{% endblock %}

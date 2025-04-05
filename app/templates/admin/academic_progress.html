@@ -1,0 +1,509 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<div class="progress-container">
+    <div class="section-header">
+        <h1><i class="fas fa-chart-line"></i> Academic Progress</h1>
+    </div>
+
+    <div class="progress-content">
+        <div class="filters">
+            <div class="filter-group">
+                <label>Department</label>
+                <select class="form-control">
+                    <option value="">All Departments</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept.id }}">{{ dept.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Semester</label>
+                <select class="form-control">
+                    <option value="">All Semesters</option>
+                    <option value="1">Semester 1</option>
+                    <option value="2">Semester 2</option>
+                    <option value="3">Semester 3</option>
+                    <option value="4">Semester 4</option>
+                </select>
+            </div>
+            <button class="btn-primary">
+                <i class="fas fa-sync"></i> Update Report
+            </button>
+        </div>
+
+        <div class="progress-overview">
+            <div class="chart-container">
+                <canvas id="performanceChart"></canvas>
+            </div>
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>CLASS AVERAGE</h3>
+                        <div class="stat-value">78%</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>TOP PERFORMER</h3>
+                        <div class="stat-value">95%</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>PASSING RATE</h3>
+                        <div class="stat-value">92%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="student-progress">
+            <div class="table-header">
+                <h2>Student Performance</h2>
+                <div class="search-box">
+                    <input type="text" placeholder="Search students...">
+                    <i class="fas fa-search"></i>
+                </div>
+            </div>
+            <div class="progress-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Department</th>
+                            <th>Semester</th>
+                            <th>Assignments</th>
+                            <th>Mid-Term</th>
+                            <th>Final</th>
+                            <th>Overall</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in students %}
+                        <tr>
+                            <td>
+                                <div class="student-info">
+                                    <img src="{{ student.profile_pic or url_for('static', filename='images/default-avatar.png') }}" alt="Student">
+                                    <div>
+                                        <h4>{{ student.first_name }} {{ student.last_name }}</h4>
+                                        <p>ID: {{ student.id }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ student.department.name }}</td>
+                            <td>Semester {{ student.semester }}</td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: {{ student.assignments_score }}%"></div>
+                                    <span>{{ student.assignments_score }}%</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: {{ student.midterm_score }}%"></div>
+                                    <span>{{ student.midterm_score }}%</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="progress-bar">
+                                    <div class="progress" style="width: {{ student.final_score }}%"></div>
+                                    <span>{{ student.final_score }}%</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="overall-grade {{ 'excellent' if student.overall_score >= 90 else 'good' if student.overall_score >= 75 else 'poor' }}">
+                                    {{ student.overall_score }}%
+                                </div>
+                            </td>
+                            <td>
+                                <button class="btn-icon" onclick="viewProgress({{ student.id }})">
+                                    <i class="fas fa-chart-bar"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .progress-container {
+        padding: 2rem;
+        background: #2D2D2D;
+        border-radius: 12px;
+        margin: 2rem;
+    }
+
+    .section-header {
+        margin-bottom: 2rem;
+    }
+
+    .section-header h1 {
+        color: #fff;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .filters {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        background: #222;
+        padding: 1.5rem;
+        border-radius: 12px;
+    }
+
+    .filter-group {
+        flex: 1;
+    }
+
+    .filter-group label {
+        display: block;
+        color: #888;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.8rem;
+        background: #2D2D2D;
+        border: 1px solid #383838;
+        border-radius: 8px;
+        color: #fff;
+    }
+
+    .btn-primary {
+        padding: 0.8rem 1.5rem;
+        background: #3498db;
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .btn-primary:hover {
+        background: #2980b9;
+    }
+
+    .progress-overview {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .chart-container {
+        background: #222;
+        border-radius: 12px;
+        padding: 1.5rem;
+        height: 400px;
+    }
+
+    .stats-container {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .stat-card {
+        background: #222;
+        border-radius: 12px;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        flex: 1;
+    }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: #2D2D2D;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #3498db;
+    }
+
+    .stat-content h3 {
+        color: #888;
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    .stat-value {
+        color: #fff;
+        font-size: 2rem;
+        font-weight: bold;
+        margin-top: 0.5rem;
+    }
+
+    .student-progress {
+        background: #222;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .table-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #383838;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .table-header h2 {
+        color: #fff;
+        margin: 0;
+    }
+
+    .search-box {
+        position: relative;
+        width: 300px;
+    }
+
+    .search-box input {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        padding-right: 2.5rem;
+        background: #2D2D2D;
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+    }
+
+    .search-box i {
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #666;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        background: #1a1a1a;
+        color: #888;
+        font-weight: 500;
+        text-align: left;
+        padding: 1rem;
+    }
+
+    td {
+        padding: 1rem;
+        border-bottom: 1px solid #383838;
+        color: #fff;
+    }
+
+    .student-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .student-info img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    .student-info h4 {
+        margin: 0;
+        color: #fff;
+    }
+
+    .student-info p {
+        margin: 0;
+        color: #888;
+        font-size: 0.9rem;
+    }
+
+    .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #2D2D2D;
+        border-radius: 4px;
+        position: relative;
+    }
+
+    .progress-bar .progress {
+        height: 100%;
+        background: #3498db;
+        border-radius: 4px;
+        transition: width 0.3s ease;
+    }
+
+    .progress-bar span {
+        position: absolute;
+        right: 0;
+        top: -20px;
+        font-size: 0.9rem;
+        color: #888;
+    }
+
+    .overall-grade {
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        display: inline-block;
+    }
+
+    .overall-grade.excellent {
+        background: rgba(46, 204, 113, 0.2);
+        color: #2ecc71;
+    }
+
+    .overall-grade.good {
+        background: rgba(241, 196, 15, 0.2);
+        color: #f1c40f;
+    }
+
+    .overall-grade.poor {
+        background: rgba(231, 76, 60, 0.2);
+        color: #e74c3c;
+    }
+
+    .btn-icon {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        background: #2D2D2D;
+        border: none;
+        color: #3498db;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .btn-icon:hover {
+        background: #383838;
+    }
+
+    @media (max-width: 1200px) {
+        .progress-overview {
+            grid-template-columns: 1fr;
+        }
+
+        .stats-container {
+            flex-direction: row;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .filters {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .stats-container {
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .progress-container {
+            margin: 1rem;
+            padding: 1rem;
+        }
+
+        .section-header h1 {
+            font-size: 1.5rem;
+        }
+
+        .table-header {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .search-box {
+            width: 100%;
+        }
+
+        .student-progress {
+            overflow-x: auto;
+        }
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Sample data for the performance chart
+    const ctx = document.getElementById('performanceChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+            datasets: [{
+                label: 'Class Average',
+                data: [65, 70, 75, 72, 78, 82],
+                borderColor: '#3498db',
+                tension: 0.4,
+                fill: false
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: '#383838'
+                    },
+                    ticks: {
+                        color: '#888'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: '#383838'
+                    },
+                    ticks: {
+                        color: '#888'
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    labels: {
+                        color: '#888'
+                    }
+                }
+            }
+        }
+    });
+});
+
+function viewProgress(studentId) {
+    // Implement view progress functionality
+    console.log('View progress for student:', studentId);
+}
+</script>
+{% endblock %}

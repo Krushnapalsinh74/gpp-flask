@@ -178,6 +178,49 @@
         </div>
     </div>
 
+    <!-- SEE YOUR CHILD Box -->
+    <div class="child-care-section">
+        <div class="card-header">
+            <div class="header-title">
+                <i class="fas fa-child"></i>
+                <span>SEE YOUR CHILD</span>
+            </div>
+        </div>
+        <div class="card-content">
+            <div class="action-items">
+                <a href="{{ url_for('admin.student_tracking') }}" class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="menu-text">
+                        <h4>Track Location</h4>
+                        <p>Monitor your child's current location</p>
+                    </div>
+                </a>
+
+                <a href="{{ url_for('admin.attendance_report') }}" class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="menu-text">
+                        <h4>Attendance Report</h4>
+                        <p>View daily attendance records</p>
+                    </div>
+                </a>
+
+                <a href="{{ url_for('admin.academic_progress') }}" class="menu-item">
+                    <div class="menu-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="menu-text">
+                        <h4>Academic Progress</h4>
+                        <p>Track academic performance</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
     <!-- Recent Results Table -->
     <div class="recent-results">
         <div class="table-header">
@@ -520,6 +563,126 @@
     .action-buttons .btn {
         padding: 0.5rem 1rem;
         font-size: 1.1rem;
+    }
+
+    /* SEE YOUR CHILD Section */
+    .child-care-section {
+        background: #2D2D2D;
+        border-radius: 12px;
+        margin-top: 24px;
+        overflow: hidden;
+    }
+
+    .child-care-section .card-header {
+        background: #222;
+        padding: 20px;
+    }
+
+    .child-care-section .header-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .child-care-section .header-title i {
+        font-size: 24px;
+        color: #3498db;
+    }
+
+    .child-care-section .header-title span {
+        font-size: 20px;
+        font-weight: 600;
+        color: #fff;
+    }
+
+    .child-care-section .card-content {
+        padding: 24px;
+    }
+
+    .child-care-section .action-items {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    .child-care-section .menu-item {
+        background: #222;
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        text-decoration: none;
+        transition: all 0.3s ease;
+    }
+
+    .child-care-section .menu-item:hover {
+        background: #383838;
+        transform: translateY(-5px);
+    }
+
+    .child-care-section .menu-icon {
+        width: 48px;
+        height: 48px;
+        background: #2D2D2D;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .child-care-section .menu-icon i {
+        font-size: 20px;
+        color: #3498db;
+    }
+
+    .child-care-section .menu-text h4 {
+        margin: 0;
+        color: #fff;
+        font-size: 18px;
+        font-weight: 500;
+    }
+
+    .child-care-section .menu-text p {
+        margin: 5px 0 0;
+        color: #888;
+        font-size: 14px;
+    }
+
+    @media (max-width: 992px) {
+        .child-care-section .action-items {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .child-care-section .action-items {
+            grid-template-columns: 1fr;
+        }
+        
+        .child-care-section {
+            margin-top: 20px;
+        }
+
+        .child-care-section .card-header {
+            padding: 16px;
+        }
+
+        .child-care-section .header-title i {
+            font-size: 20px;
+        }
+
+        .child-care-section .header-title span {
+            font-size: 18px;
+        }
+
+        .child-care-section .card-content {
+            padding: 16px;
+        }
+
+        .child-care-section .menu-item {
+            padding: 16px;
+        }
     }
 
     /* Responsive Design */
