@@ -1,104 +1,313 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<div class="container-fluid py-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow-sm">
-                <div class="card-header bg-light py-3">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <h5 class="mb-0">
-                            <i class="fas fa-user-plus me-2"></i> Create New User
-                        </h5>
+<div class="create-user-container">
+    <div class="create-user-card">
+        <div class="card-header">
+            <div class="header-title">
+                <i class="fas fa-user-plus"></i>
+                <h1>Create New User</h1>
+            </div>
+        </div>
+        <div class="card-content">
+            <form method="POST">
+                {{ form.hidden_tag() }}
+                <div class="form-grid">
+                    <!-- Email -->
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        {{ form.email(class="form-input", placeholder="Enter email address") }}
+                        {% if form.email.errors %}
+                            <div class="error-message">{{ form.email.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- First Name -->
+                    <div class="form-group">
+                        <label for="first_name">First Name</label>
+                        {{ form.first_name(class="form-input", placeholder="Enter first name") }}
+                        {% if form.first_name.errors %}
+                            <div class="error-message">{{ form.first_name.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Last Name -->
+                    <div class="form-group">
+                        <label for="last_name">Last Name</label>
+                        {{ form.last_name(class="form-input", placeholder="Enter last name") }}
+                        {% if form.last_name.errors %}
+                            <div class="error-message">{{ form.last_name.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        {{ form.phone(class="form-input", placeholder="Enter phone number") }}
+                        {% if form.phone.errors %}
+                            <div class="error-message">{{ form.phone.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Department -->
+                    <div class="form-group">
+                        <label for="department">Department</label>
+                        {{ form.department(class="form-select") }}
+                        {% if form.department.errors %}
+                            <div class="error-message">{{ form.department.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Roles -->
+                    <div class="form-group roles-section">
+                        <label>User Roles</label>
+                        <div class="roles-grid">
+                            {% for subfield in form.roles %}
+                            <div class="role-option">
+                                {{ subfield(class="role-checkbox") }}
+                                <label class="role-label" for="{{ subfield.id }}">
+                                    {% set role = subfield.label.text %}
+                                    <i class="fas fa-{{ 'shield-alt' if role == 'Admin' else 'user-graduate' if role == 'Student' else 'chalkboard-teacher' if role == 'Faculty' else 'user-tie' if role == 'HOD' else 'user' }}"></i>
+                                    {{ role }}
+                                </label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% if form.roles.errors %}
+                            <div class="error-message">{{ form.roles.errors[0] }}</div>
+                        {% endif %}
+                        <small class="help-text">Select one or more roles for the user</small>
                     </div>
                 </div>
-                <div class="card-body p-4">
-                    <form method="POST" class="form" role="form">
-                        {{ form.hidden_tag() }}
-                        
-                        <div class="mb-4">
-                            {{ form.email.label(class="form-label") }}
-                            {{ form.email(class="form-control", placeholder="Enter email address") }}
-                            {% if form.email.errors %}
-                                <div class="text-danger mt-1">
-                                {% for error in form.email.errors %}
-                                    <small><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</small>
-                                {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
 
-                        <div class="mb-4">
-                            {{ form.first_name.label(class="form-label") }}
-                            {{ form.first_name(class="form-control", placeholder="Enter first name") }}
-                            {% if form.first_name.errors %}
-                                <div class="text-danger mt-1">
-                                {% for error in form.first_name.errors %}
-                                    <small><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</small>
-                                {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-4">
-                            {{ form.last_name.label(class="form-label") }}
-                            {{ form.last_name(class="form-control", placeholder="Enter last name") }}
-                            {% if form.last_name.errors %}
-                                <div class="text-danger mt-1">
-                                {% for error in form.last_name.errors %}
-                                    <small><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</small>
-                                {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-4">
-                            {{ form.phone.label(class="form-label") }}
-                            {{ form.phone(class="form-control", placeholder="Enter phone number") }}
-                            {% if form.phone.errors %}
-                                <div class="text-danger mt-1">
-                                {% for error in form.phone.errors %}
-                                    <small><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</small>
-                                {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="mb-4">
-                            {{ form.roles.label(class="form-label") }}
-                            {{ form.roles(class="form-select") }}
-                            {% if form.roles.errors %}
-                                <div class="text-danger mt-1">
-                                {% for error in form.roles.errors %}
-                                    <small><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</small>
-                                {% endfor %}
-                                </div>
-                            {% endif %}
-                            <small class="text-muted">Hold Ctrl/Cmd to select multiple roles</small>
-                        </div>
-
-                        <div class="mb-4">
-                            {{ form.department.label(class="form-label") }}
-                            {{ form.department(class="form-select") }}
-                            {% if form.department.errors %}
-                                <div class="text-danger mt-1">
-                                {% for error in form.department.errors %}
-                                    <small><i class="fas fa-exclamation-circle me-1"></i>{{ error }}</small>
-                                {% endfor %}
-                                </div>
-                            {% endif %}
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <a href="{{ url_for('admin.index') }}" class="btn btn-outline-secondary">
-                                <i class="fas fa-arrow-left me-2"></i> Cancel
-                            </a>
-                            {{ form.submit(class="btn btn-primary") }}
-                        </div>
-                    </form>
+                <div class="form-actions">
+                    <button type="button" class="cancel-button" onclick="history.back()">
+                        <i class="fas fa-times"></i>
+                        Cancel
+                    </button>
+                    {{ form.submit(class="submit-button") }}
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
+
+<style>
+    .create-user-container {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .create-user-card {
+        background: #2D2D2D;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        background: #222;
+        padding: 20px;
+        border-bottom: 1px solid #383838;
+    }
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .header-title i {
+        font-size: 24px;
+        color: #3498db;
+    }
+
+    .header-title h1 {
+        font-size: 20px;
+        color: #fff;
+        margin: 0;
+        font-weight: 500;
+    }
+
+    .card-content {
+        padding: 24px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group label {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .form-input, .form-select {
+        padding: 12px;
+        background: #222;
+        border: 1px solid #383838;
+        border-radius: 6px;
+        color: #fff;
+        font-size: 14px;
+        transition: all 0.2s ease;
+    }
+
+    .form-input:focus, .form-select:focus {
+        border-color: #3498db;
+        outline: none;
+    }
+
+    .form-input::placeholder {
+        color: #666;
+    }
+
+    .form-select {
+        cursor: pointer;
+    }
+
+    .form-select option {
+        background: #222;
+        color: #fff;
+    }
+
+    .roles-section {
+        grid-column: span 2;
+        background: #222;
+        padding: 20px;
+        border-radius: 8px;
+        border: 1px solid #383838;
+    }
+
+    .roles-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin: 12px 0;
+    }
+
+    .role-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px;
+        background: #2D2D2D;
+        border-radius: 6px;
+        border: 1px solid #383838;
+        transition: all 0.2s ease;
+    }
+
+    .role-option:hover {
+        border-color: #3498db;
+        background: #333;
+    }
+
+    .role-checkbox {
+        width: 18px;
+        height: 18px;
+        accent-color: #3498db;
+        cursor: pointer;
+    }
+
+    .role-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #fff;
+        font-size: 14px;
+        cursor: pointer;
+        margin: 0;
+    }
+
+    .role-label i {
+        color: #3498db;
+        font-size: 16px;
+    }
+
+    .help-text {
+        color: #666;
+        font-size: 12px;
+        margin-top: 8px;
+        display: block;
+    }
+
+    .error-message {
+        color: #e74c3c;
+        font-size: 12px;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 12px;
+    }
+
+    .cancel-button, .submit-button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .cancel-button {
+        background: #383838;
+        color: #fff;
+    }
+
+    .cancel-button:hover {
+        background: #444;
+    }
+
+    .submit-button {
+        background: #3498db;
+        color: #fff;
+    }
+
+    .submit-button:hover {
+        background: #2980b9;
+    }
+
+    @media (max-width: 768px) {
+        .create-user-container {
+            margin: 20px auto;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .roles-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .form-actions {
+            flex-direction: column-reverse;
+        }
+
+        .cancel-button, .submit-button {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .roles-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
 {% endblock %}
