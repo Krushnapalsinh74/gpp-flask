@@ -50,3 +50,10 @@ class ResultUploadForm(FlaskForm):
         FileAllowed(['csv'], 'CSV files only!')
     ])
     submit = SubmitField('Upload Results')
+
+class AttendanceUploadForm(FlaskForm):
+    file = FileField('Attendance File (CSV)', validators=[
+        FileRequired(),
+        FileAllowed(['csv'], 'CSV files only!')
+    ])
+    submit = SubmitField('Upload Attendance')

@@ -62,7 +62,7 @@ class LoginForm(BaseLoginForm):
 
     def validate(self, extra_validators=None):
         # First run Flask-Security's validation
-        if not super(LoginForm, self).validate():
+        if not super(LoginForm, self).validate(extra_validators=extra_validators):
             return False
 
         # Find the user
