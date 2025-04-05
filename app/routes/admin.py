@@ -5,7 +5,8 @@ from ..models.user import User, Role
 from ..models.department import Department
 from ..models.project import Project
 from ..models.result import Result
-from ..forms.admin import UserCreationForm, BulkUserUploadForm, ResultUploadForm
+from ..models.attendance import Attendance
+from ..forms.admin import UserCreationForm, BulkUserUploadForm, ResultUploadForm, AttendanceUploadForm
 from ..extensions import db
 from datetime import datetime
 import pandas as pd
@@ -13,6 +14,67 @@ import os
 from flask import current_app
 
 bp = Blueprint('admin', __name__, url_prefix='/admin')
+
+@bp.route('/attendance/upload', methods=['GET', 'POST'])
+@login_required
+@roles_required('admin')
+def upload_attendance():
+    form = AttendanceUploadForm()
+    if request.method == 'POST' and form.validate_on_submit():
+        try:
+            file = form.file.data
+            df = pd.read_csv(file)
+            
+            success_count = 0
+            for _, row in df.iterrows():
+                attendance = Attendance(
+                    student_id=row['Student ID'],
+                    date=datetime.strptime(row['Date'], '%Y-%m-%d'),
+                    status=row['Status'],
+                    recorded_by=current_user.id
+                )
+                db.session.add(attendance)
+                success_count += 1
+            
+            db.session.commit()
+            flash(f'Successfully uploaded {success_count} attendance records!', 'success')
+            return redirect(url_for('admin.view_attendance'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error uploading attendance: {str(e)}', 'danger')
+    
+    return render_template('admin/upload_attendance.html', form=form)
+
+@bp.route('/attendance/view')
+@login_required
+@roles_required('admin')
+def view_attendance():
+    page = request.args.get('page', 1, type=int)
+    department = request.args.get('department', '')
+    date = request.args.get('date', '')
+    
+    # Base query
+    query = Attendance.query.join(User)
+    
+    # Apply filters
+    if department:
+        query = query.filter(User.department_id == department)
+    if date:
+        query = query.filter(Attendance.date == datetime.strptime(date, '%Y-%m-%d'))
+    
+    # Get unique filter options
+    departments = Department.query.all()
+    
+    # Paginate results
+    attendance_records = query.order_by(Attendance.date.desc()).paginate(
+        page=page, per_page=50, error_out=False)
+    
+    return render_template('admin/view_attendance.html',
+                          records=attendance_records,
+                          departments=departments,
+                          current_department=department,
+                          current_date=date)
 
 @bp.route('/')
 @roles_required('admin')

@@ -108,107 +108,149 @@
             </div>
         </div>
 
-        <!-- Departments Card -->
-        <div class="card">
-            <div class="department-header">
-                <h2>Departments</h2>
-                <div class="search-box">
-                    <input type="text" class="search-input" placeholder="Search departments...">
-                    <button class="btn-search">Search</button>
-                </div>
+        <div class="action-card student-monitoring">
+            <div class="card-header">
+                <h2><i class="fas fa-graduation-cap"></i> SEE YOUR STUDENT ALWAYS</h2>
+                <a href="{{ url_for('admin.view_attendance') }}" class="view-all">View All</a>
             </div>
-            <button class="btn-new">+ New Department</button>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Department Name</th>
-                            <th>HOD</th>
-                            <th>Total Students</th>
-                            <th>Total Lecturers</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for dept in departments %}
-                        <tr>
-                            <td>{{ dept.id }}</td>
-                            <td>{{ dept.name }}</td>
-                            <td>{{ dept.hod or 'Not Assigned' }}</td>
-                            <td>{{ dept.total_students }}</td>
-                            <td>{{ dept.total_lecturers }}</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn-edit">Edit</button>
-                                    <button class="btn-delete">Delete</button>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- Recent Results Table -->
-    <div class="recent-results">
-        <div class="table-header">
-            <h2><i class="fas fa-history"></i> Recent Results</h2>
-            <div class="table-actions">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="resultSearch" placeholder="Search results...">
-                </div>
-                <a href="{{ url_for('admin.view_results') }}" class="btn btn-outline-primary btn-lg">View All</a>
-            </div>
-        </div>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Student ID</th>
-                        <th>Name</th>
-                        <th>Exam</th>
-                        <th>Declaration Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for result in stats.recent_results %}
-                    <tr>
-                        <td>{{ result.student_id }}</td>
-                        <td>{{ result.student.name }}</td>
-                        <td>{{ result.exam_name }}</td>
-                        <td>{{ result.declaration_date.strftime('%Y-%m-%d') }}</td>
-                        <td>
-                            <span class="status-badge {{ result.status|lower }}">
-                                {{ result.status }}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <a href="{{ url_for('admin.result_details', result_id=result.id) }}" 
-                                   class="btn btn-info" title="View Details">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ url_for('admin.edit_result', result_id=result.id) }}" 
-                                   class="btn btn-warning" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </a>
+            <div class="card-content">
+                <div class="row g-4">
+                    <!-- Upload Attendance -->
+                    <div class="col-md-4">
+                        <a href="{{ url_for('admin.upload_attendance') }}" class="action-item-card">
+                            <div class="icon-circle bg-primary">
+                                <i class="fas fa-upload"></i>
                             </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+                            <div class="item-content">
+                                <h4>Upload Attendance</h4>
+                                <p>Add new attendance records</p>
+                            </div>
+                        </a>
+                    </div>
 
+                    <!-- View Attendance -->
+                    <div class="col-md-4">
+                        <a href="{{ url_for('admin.view_attendance') }}" class="action-item-card">
+                            <div class="icon-circle bg-info">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <div class="item-content">
+                                <h4>View Attendance</h4>
+                                <p>Check attendance statistics</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Academic Progress -->
+                    <div class="col-md-4">
+                        <a href="#" class="action-item-card">
+                            <div class="icon-circle bg-success">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="item-content">
+                                <h4>Academic Progress</h4>
+                                <p>Track student performance</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Daily Status -->
+                    <div class="col-md-4">
+                        <a href="#" class="action-item-card">
+                            <div class="icon-circle bg-warning">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="item-content">
+                                <h4>Daily Status</h4>
+                                <p>Today's attendance overview</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Low Attendance -->
+                    <div class="col-md-4">
+                        <a href="#" class="action-item-card">
+                            <div class="icon-circle bg-danger">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="item-content">
+                                <h4>Low Attendance</h4>
+                                <p>Students below threshold</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Export Reports -->
+                    <div class="col-md-4">
+                        <a href="#" class="action-item-card">
+                            <div class="icon-circle bg-secondary">
+                                <i class="fas fa-file-export"></i>
+                            </div>
+                            <div class="item-content">
+                                <h4>Export Reports</h4>
+                                <p>Download attendance data</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
 <style>
+    /* Student Monitoring */
+    .student-monitoring .card-content {
+        padding: 2rem;
+    }
+
+    .action-item-card {
+        display: block;
+        text-decoration: none;
+        color: var(--text-color);
+        background: var(--card-bg);
+        border-radius: 15px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        height: 100%;
+        border: 1px solid rgba(0,0,0,0.1);
+    }
+
+    .action-item-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 .5rem 1rem rgba(0,0,0,.15);
+    }
+
+    .icon-circle {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: white;
+        margin-bottom: 5rem;
+    }
+
+    .bg-primary { background-color: #4e73df !important; }
+    .bg-info { background-color: #36b9cc !important; }
+    .bg-success { background-color: #1cc88a !important; }
+    .bg-warning { background-color: #f6c23e !important; }
+    .bg-danger { background-color: #e74a3b !important; }
+    .bg-secondary { background-color: #858796 !important; }
+
+    .item-content h4 {
+        margin: 0;
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+    }
+
+    .item-content p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: var(--text-muted);
+    }
+
     .admin-dashboard {
         padding: 2rem;
         margin: 0 auto;

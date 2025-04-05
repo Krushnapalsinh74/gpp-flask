@@ -31,12 +31,12 @@ class User(db.Model, UserMixin):
     phone = db.Column(db.String(20))
     
     # Department relationship
-    department_id = db.Column(db.Integer, db.ForeignKey('departments.id', name='fk_user_department'))
+    department_id = db.Column(db.Integer, db.ForeignKey('departments.id', name='fk_user_department', use_alter=True, initially='DEFERRED'))
     
     # Approval fields
     is_approved = db.Column(db.Boolean, default=False)
     approval_date = db.Column(db.DateTime)
-    approved_by_id = db.Column(db.Integer, db.ForeignKey('user.id', name='fk_user_approver'))
+    approved_by_id = db.Column(db.Integer, db.ForeignKey('user.id', name='fk_user_approver', use_alter=True, initially='DEFERRED'))
     
     # Timestamps
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
