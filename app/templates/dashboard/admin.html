@@ -107,103 +107,45 @@
                 </a>
             </div>
         </div>
-
-        <!-- Departments Card -->
-        <div class="card">
-            <div class="department-header">
-                <h2>Departments</h2>
-                <div class="search-box">
-                    <input type="text" class="search-input" placeholder="Search departments...">
-                    <button class="btn-search">Search</button>
-                </div>
-            </div>
-            <button class="btn-new">+ New Department</button>
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Department Name</th>
-                            <th>HOD</th>
-                            <th>Total Students</th>
-                            <th>Total Lecturers</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for dept in departments %}
-                        <tr>
-                            <td>{{ dept.id }}</td>
-                            <td>{{ dept.name }}</td>
-                            <td>{{ dept.hod or 'Not Assigned' }}</td>
-                            <td>{{ dept.total_students }}</td>
-                            <td>{{ dept.total_lecturers }}</td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn-edit">Edit</button>
-                                    <button class="btn-delete">Delete</button>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </div>
 
-    <!-- Recent Results Table -->
-    <div class="recent-results">
-        <div class="table-header">
-            <h2><i class="fas fa-history"></i> Recent Results</h2>
-            <div class="table-actions">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="resultSearch" placeholder="Search results...">
-                </div>
-                <a href="{{ url_for('admin.view_results') }}" class="btn btn-outline-primary btn-lg">View All</a>
-            </div>
+    <!-- SEE YOU CHILD Box -->
+    <div class="child-care-section">
+        <div class="card-header">
+            <h2><i class="fas fa-child"></i> SEE YOUR CHILD ALWAYS</h2>
+            <p class="subtitle">Empowering the future through care and guidance</p>
         </div>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Student ID</th>
-                        <th>Name</th>
-                        <th>Exam</th>
-                        <th>Declaration Date</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for result in stats.recent_results %}
-                    <tr>
-                        <td>{{ result.student_id }}</td>
-                        <td>{{ result.student.name }}</td>
-                        <td>{{ result.exam_name }}</td>
-                        <td>{{ result.declaration_date.strftime('%Y-%m-%d') }}</td>
-                        <td>
-                            <span class="status-badge {{ result.status|lower }}">
-                                {{ result.status }}
-                            </span>
-                        </td>
-                        <td>
-                            <div class="action-buttons">
-                                <a href="{{ url_for('admin.result_details', result_id=result.id) }}" 
-                                   class="btn btn-info" title="View Details">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ url_for('admin.edit_result', result_id=result.id) }}" 
-                                   class="btn btn-warning" title="Edit">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="action-items">
+            <a href="#" class="action-item">
+                <div class="action-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <div class="action-content">
+                    <h4>Child Care</h4>
+                    <p>Always be there for children</p>
+                    <span class="learn-more">Learn more <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </a>
+            <a href="#" class="action-item">
+                <div class="action-icon">
+                    <i class="fas fa-hands-helping"></i>
+                </div>
+                <div class="action-content">
+                    <h4>Support</h4>
+                    <p>Provide guidance and support</p>
+                    <span class="learn-more">Learn more <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </a>
+            <a href="#" class="action-item">
+                <div class="action-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="action-content">
+                    <h4>Inspire</h4>
+                    <p>Be an inspiration</p>
+                    <span class="learn-more">Learn more <i class="fas fa-arrow-right"></i></span>
+                </div>
+            </a>
         </div>
     </div>
 </div>
@@ -389,125 +331,165 @@
         opacity: 0.7;
     }
 
-    /* Recent Results Table */
-    .recent-results {
-        background: var(--card-bg);
-        border-radius: 15px;
-        overflow: hidden;
-    }
-
-    .table-header {
-        padding: 1.5rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid var(--panel-border);
-    }
-
-    .table-header h2 {
-        margin: 0;
-        font-size: 1.5rem;
-        color: var(--text-color);
-    }
-
-    .table-actions {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-    }
-
-    .search-box {
-        position: relative;
-    }
-
-    .search-box i {
-        position: absolute;
-        left: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-color);
-        opacity: 0.5;
-        font-size: 1.2rem;
-    }
-
-    .search-box input {
-        padding: 0.8rem 1rem 0.8rem 3rem;
-        border: 1px solid var(--input-border);
-        border-radius: 25px;
-        background: var(--input-bg);
-        color: var(--text-color);
-        width: 300px;
-        font-size: 1.1rem;
-    }
-
-    .table {
-        margin: 0;
-        font-size: 1.1rem;
+    /* SEE YOU CHILD Box */
+    .child-care-section {
+        background: #4e4b4b5b;
+        border-radius: 20px;
+        padding: 3rem;
+        margin: 2rem auto;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0);
+        border: 2px solid #333333;
         width: 100%;
-        margin-bottom: 1rem;
-        background-color: var(--card-bg);
-        border-radius: 8px;
+        position: relative;
         overflow: hidden;
     }
 
-    .table th {
-        background-color: var(--card-bg);
-        color: var(--text-color);
-        font-weight: 600;
-        padding: 1rem;
-        border-bottom: 2px solid var(--panel-border);
+    .child-care-section .card-header {
+        text-align: center;
+        margin-bottom: 3rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid #38353542;
+        position: relative;
+        z-index: 1;
     }
 
-    .table td {
-        padding: 1rem;
-        vertical-align: middle;
-        color: var(--text-color);
-        border-bottom: 1px solid var(--panel-border);
-    }
-
-    .table tbody tr {
-        background-color: var(--card-bg);
-        transition: background-color 0.3s ease;
-    }
-
-    .table tbody tr:nth-child(even) {
-        background-color: rgba(128, 128, 128, 0.05);
-    }
-
-    .table tbody tr:hover {
-        background-color: rgba(128, 128, 128, 0.1);
-    }
-
-    .status-badge {
-        padding: 0.5rem 1rem;
-        border-radius: 25px;
-        font-size: 1rem;
-        font-weight: 500;
-    }
-
-    .status-badge.passed {
-        background: rgba(28, 200, 138, 0.1);
-        color: #1cc88a;
-    }
-
-    .status-badge.failed {
-        background: rgba(231, 74, 59, 0.1);
-        color: #e74a3b;
-    }
-
-    .status-badge.pending {
-        background: rgba(246, 194, 62, 0.1);
-        color: #f6c23e;
-    }
-
-    .action-buttons {
+    .child-care-section .card-header h2 {
+        color: #ffffff;
+        font-size: 2.5rem;
+        margin: 0;
         display: flex;
+        align-items: center;
+        justify-content: center;
         gap: 1rem;
     }
 
-    .action-buttons .btn {
-        padding: 0.5rem 1rem;
-        font-size: 1.1rem;
+    .child-care-section .card-header .subtitle {
+        color: #cccccc;
+        font-size: 1.2rem;
+        margin-top: 1rem;
+        font-weight: 500;
+    }
+
+    .child-care-section .card-header i {
+        color: #ffffff;
+        font-size: 2.5rem;
+    }
+
+    .child-care-section .action-items {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        padding: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .child-care-section .action-item {
+        background: #0000003d;
+        border-radius: 15px;
+        padding: 2rem;
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 1.5rem;
+        transition: all 0.3s ease;
+        border: 1px solid #333333;
+        text-decoration: none;
+        height: auto;
+        min-height: 160px;
+    }
+
+    .child-care-section .action-item:hover {
+        background: #1a1a1a;
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+        border-color: #444444;
+    }
+
+    .child-care-section .action-icon {
+        background: #000000;
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+        border: 1px solid #333333;
+    }
+
+    .child-care-section .action-item:hover .action-icon {
+        background: #222222;
+        border-color: #444444;
+    }
+
+    .child-care-section .action-icon i {
+        font-size: 1.5rem;
+        color: #ffffff;
+        transition: all 0.3s ease;
+    }
+
+    .child-care-section .action-content h4 {
+        color: #ffffff;
+        font-size: 1.5rem;
+        margin: 0;
+    }
+
+    .child-care-section .action-content p {
+        color: #999999;
+        font-size: 1rem;
+        line-height: 1.5;
+        margin: 0;
+        flex-grow: 1;
+    }
+
+    .child-care-section .learn-more {
+        color: #ffffff;
+        font-size: 0.9rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        opacity: 0;
+        transform: translateX(-10px);
+        transition: all 0.3s ease;
+        margin-top: auto;
+    }
+
+    .child-care-section .action-item:hover .learn-more {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    @media (max-width: 1200px) {
+        .child-care-section {
+            padding: 2rem;
+        }
+        
+        .child-care-section .action-items {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .child-care-section {
+            padding: 1.5rem;
+        }
+
+        .child-care-section .card-header h2 {
+            font-size: 2rem;
+        }
+
+        .child-care-section .action-items {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .child-care-section .action-item {
+            padding: 1.5rem;
+            min-height: auto;
+        }
     }
 
     /* Responsive Design */
@@ -551,6 +533,22 @@
 
         .search-box input {
             width: 100%;
+        }
+
+        .child-care-section {
+            padding: 1.5rem;
+        }
+
+        .child-care-section .card-header h2 {
+            font-size: 2rem;
+        }
+
+        .child-care-section .action-items {
+            grid-template-columns: 1fr;
+        }
+
+        .child-care-section .action-item {
+            padding: 1.5rem;
         }
     }
 </style>

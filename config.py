@@ -2,6 +2,7 @@ import os
 from datetime import timedelta
 from dotenv import load_dotenv
 
+
 load_dotenv()
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -31,6 +32,8 @@ class Config:
     SECURITY_RESET_PASSWORD_WITHIN = '1 days'
     SECURITY_TWO_FACTOR = False
     SECURITY_BLUEPRINT_NAME = 'security'
+    SECURITY_PASSWORD_HASH = 'bcrypt'  # Use bcrypt instead of argon2
+    SECURITY_PASSWORD_SCHEMES = ['bcrypt']  # Only allow bcrypt
 
     # Email configuration
     MAIL_SERVER = os.getenv('MAIL_SERVER')

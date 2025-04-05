@@ -27,7 +27,10 @@ class ExtendedRegisterForm(FlaskForm):
         ('hod', 'HOD'),
         ('librarian', 'Librarian'),
         ('principal', 'Principal'),
-        ('store_officer', 'Store Officer')
+        ('store_officer', 'Store Officer'),
+        ('claacodinator', 'Claacodinator'),
+        ('admin', 'Admin'),
+        ('user', 'User')
     ], validators=[DataRequired()])
     submit = SubmitField('Register')
 
@@ -43,15 +46,5 @@ class LoginForm(FlaskForm):
         Email()
     ])
     password = PasswordField('Password', validators=[DataRequired()])
-    role = SelectField('Login As', choices=[
-        ('student', 'Student'),
-        ('lecturer', 'Lecturer'),
-        ('lab_assistant', 'Lab Assistant'),
-        ('hod', 'HOD'),
-        ('librarian', 'Librarian'),
-        ('principal', 'Principal'),
-        ('store_officer', 'Store Officer'),
-        ('admin', 'Administrator')
-    ], validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')

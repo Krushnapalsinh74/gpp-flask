@@ -27,6 +27,7 @@ def index():
     lab_assistant_role = Role.query.filter_by(name='lab_assistant').first()
     librarian_role = Role.query.filter_by(name='librarian').first()
     store_officer_role = Role.query.filter_by(name='store_officer').first()
+    claacodinator_role = Role.query.filter_by(name='claacodinator').first()
     
     hods = User.query.filter(User.roles.contains(hod_role)).all() if hod_role else []
     lecturers = User.query.filter(User.roles.contains(lecturer_role)).all() if lecturer_role else []
@@ -34,9 +35,14 @@ def index():
     lab_assistants = User.query.filter(User.roles.contains(lab_assistant_role)).all() if lab_assistant_role else []
     librarians = User.query.filter(User.roles.contains(librarian_role)).all() if librarian_role else []
     store_officers = User.query.filter(User.roles.contains(store_officer_role)).all() if store_officer_role else []
+    claacodinators = User.query.filter(User.roles.contains(claacodinator_role)).all() if claacodinator_role else []
     
     # Get departments
-    departments = Department.query.all()
+    dept_search = request.args.get('dept_search', '')
+    if dept_search:
+        departments = Department.query.filter(Department.name.ilike(f'%{dept_search}%')).all()
+    else:
+        departments = Department.query.all()
     
     # Get projects
     projects = Project.query.all()
@@ -49,7 +55,9 @@ def index():
                          lab_assistants=lab_assistants,
                          librarians=librarians,
                          store_officers=store_officers,
+                         claacodinators=claacodinators,
                          departments=departments,
+                         dept_search=dept_search,
                          projects=projects)
 
 @bp.route('/approve_user/<int:user_id>', methods=['POST'])
@@ -71,70 +79,6 @@ def reject_user(user_id):
     db.session.commit()
     flash(f'User {user.email} has been rejected and removed.', 'success')
     return redirect(url_for('admin.index'))
-
-@bp.route('/create_department', methods=['POST'])
-@roles_required('admin')
-def create_department():
-    name = request.form.get('name')
-    hod_id = request.form.get('hod_id')
-    
-    if not name:
-        flash('Department name is required.', 'error')
-        return redirect(url_for('admin.index', _anchor='departments'))
-    
-    if Department.query.filter_by(name=name).first():
-        flash('Department with this name already exists.', 'error')
-        return redirect(url_for('admin.index', _anchor='departments'))
-    
-    department = Department(name=name)
-    if hod_id:
-        department.hod_id = hod_id
-    
-    db.session.add(department)
-    db.session.commit()
-    
-    flash(f'Department {name} has been created.', 'success')
-    return redirect(url_for('admin.index', _anchor='departments'))
-
-@bp.route('/edit_department/<int:dept_id>', methods=['POST'])
-@roles_required('admin')
-def edit_department(dept_id):
-    department = Department.query.get_or_404(dept_id)
-    name = request.form.get('name')
-    hod_id = request.form.get('hod_id')
-    
-    if not name:
-        flash('Department name is required.', 'error')
-        return redirect(url_for('admin.index', _anchor='departments'))
-    
-    existing = Department.query.filter_by(name=name).first()
-    if existing and existing.id != dept_id:
-        flash('Department with this name already exists.', 'error')
-        return redirect(url_for('admin.index', _anchor='departments'))
-    
-    department.name = name
-    department.hod_id = hod_id if hod_id else None
-    db.session.commit()
-    
-    flash(f'Department {name} has been updated.', 'success')
-    return redirect(url_for('admin.index', _anchor='departments'))
-
-@bp.route('/delete_department/<int:dept_id>', methods=['POST'])
-@roles_required('admin')
-def delete_department(dept_id):
-    department = Department.query.get_or_404(dept_id)
-    name = department.name
-    
-    # Check if department has any users
-    if department.students or department.lecturers:
-        flash('Cannot delete department that has users assigned to it.', 'error')
-        return redirect(url_for('admin.index', _anchor='departments'))
-    
-    db.session.delete(department)
-    db.session.commit()
-    
-    flash(f'Department {name} has been deleted.', 'success')
-    return redirect(url_for('admin.index', _anchor='departments'))
 
 @bp.route('/users', methods=['GET'])
 @roles_required('admin')
@@ -167,7 +111,6 @@ def create_user():
                 first_name=form.first_name.data,
                 last_name=form.last_name.data,
                 phone=form.phone.data,
-                department_id=form.department.data,
                 password=hash_password('changeme123'),
                 is_approved=True,
                 created_at=datetime.utcnow()
@@ -273,6 +216,70 @@ def bulk_upload():
             return redirect(url_for('admin.index'))
     
     return render_template('admin/bulk_upload.html', form=form)
+
+@bp.route('/create_department', methods=['POST'])
+@roles_required('admin')
+def create_department():
+    name = request.form.get('name')
+    hod_id = request.form.get('hod_id')
+    
+    if not name:
+        flash('Department name is required.', 'error')
+        return redirect(url_for('admin.index', _anchor='departments'))
+    
+    if Department.query.filter_by(name=name).first():
+        flash('Department with this name already exists.', 'error')
+        return redirect(url_for('admin.index', _anchor='departments'))
+    
+    department = Department(name=name)
+    if hod_id:
+        department.hod_id = hod_id
+    
+    db.session.add(department)
+    db.session.commit()
+    
+    flash(f'Department {name} has been created.', 'success')
+    return redirect(url_for('admin.index', _anchor='departments'))
+
+@bp.route('/edit_department/<int:dept_id>', methods=['POST'])
+@roles_required('admin')
+def edit_department(dept_id):
+    department = Department.query.get_or_404(dept_id)
+    name = request.form.get('name')
+    hod_id = request.form.get('hod_id')
+    
+    if not name:
+        flash('Department name is required.', 'error')
+        return redirect(url_for('admin.index', _anchor='departments'))
+    
+    existing = Department.query.filter_by(name=name).first()
+    if existing and existing.id != dept_id:
+        flash('Department with this name already exists.', 'error')
+        return redirect(url_for('admin.index', _anchor='departments'))
+    
+    department.name = name
+    department.hod_id = hod_id if hod_id else None
+    db.session.commit()
+    
+    flash(f'Department {name} has been updated.', 'success')
+    return redirect(url_for('admin.index', _anchor='departments'))
+
+@bp.route('/delete_department/<int:dept_id>', methods=['POST'])
+@roles_required('admin')
+def delete_department(dept_id):
+    department = Department.query.get_or_404(dept_id)
+    name = department.name
+    
+    # Check if department has any users
+    if department.users:
+        flash('Cannot delete department that has users assigned to it.', 'error')
+        return redirect(url_for('admin.index', _anchor='departments'))
+    
+    db.session.delete(department)
+    db.session.commit()
+    
+    flash(f'Department {name} has been deleted.', 'success')
+    return redirect(url_for('admin.index', _anchor='departments'))
 
 @bp.route('/api/departments/<int:dept_id>')
 @roles_required('admin')

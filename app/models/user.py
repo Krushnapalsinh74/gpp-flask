@@ -31,12 +31,12 @@ class User(db.Model, UserMixin):
     phone = db.Column(db.String(20))
     
     # Department relationship
-    department_id = db.Column(db.Integer, db.ForeignKey('departments.id', name='fk_user_department'))
+    department_id = db.Column(db.Integer, db.ForeignKey('departments.id', name='fk_user_department', use_alter=True), nullable=True)
     
     # Approval fields
     is_approved = db.Column(db.Boolean, default=False)
     approval_date = db.Column(db.DateTime)
-    approved_by_id = db.Column(db.Integer, db.ForeignKey('user.id', name='fk_user_approver'))
+    approved_by_id = db.Column(db.Integer, db.ForeignKey('user.id', name='fk_user_approver', use_alter=True), nullable=True)
     
     # Timestamps
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -46,10 +46,10 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users,
                           backref=db.backref('users', lazy='dynamic'))
     approved_by = db.relationship('User', remote_side=[id],
-                                backref='approved_users')
+                                backref='approved_users', post_update=True)
     
     def __str__(self):
-        return f"{self.email} ({', '.join(role.name for role in self.roles)})"
+        return f"{self.first_name} {self.last_name} <{self.email}>"
     
     @property
     def is_admin(self):
