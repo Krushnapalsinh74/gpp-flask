@@ -31,12 +31,16 @@ class User(db.Model, UserMixin):
     phone = db.Column(db.String(20))
     
     # Department relationship
-    department_id = db.Column(db.Integer, db.ForeignKey('departments.id', name='fk_user_department', use_alter=True, initially='DEFERRED'))
+    department_id = db.Column(db.Integer, db.ForeignKey('departments.id', name='fk_user_department'))
+    department = db.relationship('Department', foreign_keys=[department_id],
+                               back_populates='users')
+    department_led = db.relationship('Department', back_populates='hod',
+                                   foreign_keys='Department.hod_id')
     
     # Approval fields
     is_approved = db.Column(db.Boolean, default=False)
     approval_date = db.Column(db.DateTime)
-    approved_by_id = db.Column(db.Integer, db.ForeignKey('user.id', name='fk_user_approver', use_alter=True, initially='DEFERRED'))
+    approved_by_id = db.Column(db.Integer, db.ForeignKey('user.id', name='fk_user_approver'))
     
     # Timestamps
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -46,6 +50,7 @@ class User(db.Model, UserMixin):
     roles = db.relationship('Role', secondary=roles_users,
                           backref=db.backref('users', lazy='dynamic'))
     approved_by = db.relationship('User', remote_side=[id],
+                                foreign_keys=[approved_by_id],
                                 backref='approved_users')
     
     def __str__(self):

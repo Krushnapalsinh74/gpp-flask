@@ -42,6 +42,15 @@
                     {{ login_user_form.remember.label }}
                 </div>
                 <div class="form-group">
+                    {{ login_user_form.role.label }}
+                    {{ login_user_form.role(class="form-control") }}
+                    {% if login_user_form.role.errors %}
+                        {% for error in login_user_form.role.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+                <div class="form-group">
                     {{ login_user_form.submit(class="btn btn-primary btn-block") }}
                 </div>
             </form>

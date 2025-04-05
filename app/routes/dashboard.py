@@ -23,6 +23,9 @@ def index():
         
         return render_template('dashboard/admin.html', stats=stats, recent_activity=recent_activity)
     
+    if current_user.has_role('lecturer') or current_user.has_role('hod'):
+        return render_template('dashboard/student_dashboard.html')
+    
     role = current_user.roles[0].name if current_user.roles else None
     template = f'dashboard/{role}.html' if role else 'dashboard/user.html'
     
