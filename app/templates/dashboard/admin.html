@@ -199,11 +199,19 @@
 <style>
     /* Student Monitoring */
     .student-monitoring .card-content {
-        padding: 0.5rem;
+        padding: 1.5rem;
+    }
+    
+    .student-monitoring .row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+        align-items: stretch;
     }
 
     .action-item-card {
-        display: block;
+        display: flex;
+        flex-direction: column;
         text-decoration: none;
         color: var(--text-color);
         background: var(--card-bg);
@@ -212,6 +220,7 @@
         transition: all 0.3s ease;
         height: 100%;
         border: 1px solid rgba(0,0,0,0.1);
+        min-height: 140px;
     }
 
     .action-item-card:hover {
@@ -228,7 +237,7 @@
         justify-content: center;
         font-size: 1.2rem;
         color: white;
-        margin-bottom: 5rem;
+        margin-bottom: 1rem;
     }
 
     .bg-primary { background-color: #4e73df !important; }
@@ -288,6 +297,7 @@
         grid-template-columns: repeat(3, 1fr);
         gap: 2rem;
         margin-bottom: 2rem;
+        align-items: stretch;
     }
 
     .stat-card {
@@ -353,15 +363,19 @@
     /* Action Grid */
     .action-grid {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: 2rem;
         margin-bottom: 2rem;
+        align-items: stretch;
     }
 
     .action-card {
         background: var(--card-bg);
         border-radius: 15px;
         overflow: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
     }
 
     .action-card .card-header {
@@ -388,6 +402,7 @@
 
     .card-content {
         padding: 1.5rem;
+        flex: 1;
     }
 
     .action-item {
@@ -557,17 +572,25 @@
         .stats-grid {
             grid-template-columns: repeat(3, 1fr);
         }
+        
+        .action-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
     }
 
     @media (max-width: 1200px) {
         .action-grid {
-            grid-template-columns: 1fr;
+            grid-template-columns: repeat(2, 1fr);
         }
     }
 
     @media (max-width: 992px) {
         .stats-grid {
             grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .action-grid {
+            grid-template-columns: 1fr;
         }
     }
 
@@ -593,6 +616,16 @@
 
         .search-box input {
             width: 100%;
+        }
+        
+        .student-monitoring .row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .student-monitoring .row {
+            grid-template-columns: 1fr;
         }
     }
 </style>
